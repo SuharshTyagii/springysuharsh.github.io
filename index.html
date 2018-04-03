@@ -1,25 +1,75 @@
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <h1>Testing is fun</h1>
-  <button>CLICK ME!!!</button>
-  <input type="input" name="witQuery"></ins>
+  <title>Let's do it again</title>
 
-  <video width="400" controls>
-  <source src="cat_woke.mp4" type="video/mp4">
-
-  Your browser does not support HTML5 video.
-</video>
-
-  <!-- PLEASE NO CHANGES BELOW THIS LINE (UNTIL I SAY SO) -->
-  <script language="javascript" type="text/javascript" src="libraries/p5.js"></script>
-  <script language="javascript" type="text/javascript" src="springy.js"></script>
-  <!-- OK, YOU CAN MAKE CHANGES BELOW THIS LINE AGAIN -->
-
-  <!-- this line removes any default padding and style. you might only need one of these values set. -->
-  <style> body {padding: 0; margin: 0;} </style>
 </head>
 
+<script src = "https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+
+<h1> Welcome to Spyderbot! </h1>
+<p>Example:- "Move this object from table 5 to table 3"</p>
+
+  <input type="text" id="tellspidy" value="Move apple from table 5 to table 3"><br>
+  <input type="submit" onclick= "getWit()" value="Extract Meaning">
+
+
+
+<h3>Extracted Meaning is:</h3>
+<h3 id = "yousaid"></h3>
+
+<li id="intent"></li>
+<li id="thing"></li>
+<li id="location1"></li>
+<li id="location2"></li>
+<h3>Debug data below</h3>
+<h3 id="sending"></h3>
 <body>
+
+<script>
+
+function getWit() {
+	 var askWit=document.getElementById('tellspidy').value;
+
+  $.ajax({
+    
+    url: 'https://api.wit.ai/message',
+      data: {
+      'q': askWit,
+      'access_token' : '6HMSKR53RVPOKPQDQZSPHIICU7M4L532'
+            },
+      dataType: 'jsonp',
+      method: 'GET',
+      success: function(response) {
+      console.log("success!", JSON.stringify(response));
+
+		document.getElementById('sending').innerHTML = JSON.stringify(response);
+
+		var stringifiedWitResponse = JSON.stringify(response);
+		var parsedResponse = JSON.parse(stringifiedWitResponse);
+
+	    var intention = parsedResponse.entities.intent[0].value;
+	    var thing = parsedResponse.entities.search_query[0].value;
+	    var location1 = parsedResponse.entities.number[0].value;
+	    var location2 = parsedResponse.entities.number[1].value;
+
+		document.getElementById('yousaid').innerHTML = "You said: " + parsedResponse._text;
+		document.getElementById('intent').innerHTML = "Intention is: " + intention;
+		document.getElementById('thing').innerHTML = "Object: " +thing;
+		document.getElementById('location1').innerHTML = "From table: " + location1;
+		document.getElementById('location2').innerHTML = "To table: " +location2;
+
+		}
+    
+
+
+  });
+
+  }
+
+
+</script>
+
 </body>
 </html>
